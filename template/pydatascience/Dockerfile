@@ -47,7 +47,8 @@ RUN touch ./function/__init__.py
 
 WORKDIR /home/app/function/
 COPY function/requirements*.txt	./
-RUN conda install --file requirements.txt --file requirements_test.txt -c ${CHANNEL}
+# RUN conda install --file requirements.txt --file requirements_test.txt -c ${CHANNEL}
+RUN conda install --file requirements.txt -c ${CHANNEL}
 
 
 COPY function/ .
