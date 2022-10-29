@@ -33,6 +33,7 @@ USER app
 
 RUN bash /tmp/miniforge.sh -bfp $HOME/conda \
     && conda install -y python=3 \
+    && conda install -c pytorch pytorch \
     && conda update conda \
     && conda clean --all --yes \
     && rm -rf /tmp/miniforge.sh
