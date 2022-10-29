@@ -67,5 +67,7 @@ dependencies:
   - wrapt=1.11.1=py37h1de35cc_0
   - xz=5.2.4=h1de35cc_1001
   - zlib=1.2.11=h1de35cc_1004
-prefix: /Users/lucasroesler/miniconda3/envs/classify
+  - pip:
+    - transformers==4.3.1
+prefix: /Users/lucasroesler/miniconda3/envs/bert-classify
 
