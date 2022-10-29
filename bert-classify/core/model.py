@@ -1,5 +1,3 @@
-from unicodedata import category
-import pandas as pd
 import torch
 import numpy as np
 from transformers import BertTokenizer, BertModel
@@ -7,11 +5,6 @@ from torch import nn
 from torch.optim import Adam
 from tqdm import tqdm
 
-datapath = f'bbc-text.csv'
-df = pd.read_csv(datapath)
-df.head()
-
-df.groupby(['category']).size().plot.bar()
 
 tokenizer = BertTokenizer.from_pretrained('bert-base-cased')
 labels = {'business':0,
@@ -31,12 +24,6 @@ class Dataset(torch.utils.data.Dataset):
                                padding='max_length', max_length = 512, truncation=True,
                                 return_tensors="pt") for text in df['text']]
 
-    def __init__(self, df, inference):
-        self.labels = []
-        self.texts = [tokenizer(text, 
-                               padding='max_length', max_length = 512, truncation=True,
-                                return_tensors="pt") for text in df['text']]
-   
     def classes(self):
         return self.labels
 
@@ -184,13 +171,10 @@ def evaluate(model, test_data):
     with torch.no_grad():
 
         for test_input, test_label in test_dataloader:
-              print(test_label)
               test_label = test_label.to(device)
               mask = test_input['attention_mask'].to(device)
               input_id = test_input['input_ids'].squeeze(1).to(device)
               output = model(input_id, mask)
-              print("infer", output)
-              print(output.argmax(dim=1), test_label)
               acc = (output.argmax(dim=1) == test_label).sum().item()
               total_acc_test += acc
     
@@ -221,19 +205,6 @@ def inference(model, infer_data):
 
     return infer_output
 
-
-np.random.seed(112)
-df_train, df_val, df_test = np.split(df.sample(frac=1, random_state=42), 
-                                     [int(.8*len(df)), int(.9*len(df))])
-
-print(len(df_train),len(df_val), len(df_test))
-
-EPOCHS = 5
-model = BertClassifier()
-LR = 1e-6
-              
-#train(model, df_train, df_val, LR, EPOCHS)
-
 def get_labels(values):
     keys = []
 
@@ -242,8 +213,4 @@ def get_labels(values):
         keys.append(key_list[position])
     return keys
 
-infer_data = ["all is well", "VT is good in sports", "Asu is better than usa"]
-df_infer = pd.DataFrame(infer_data, columns=['text'])
-infer_output = inference(model, df_infer)
-infer_output = get_labels(infer_output)
-print(infer_output)
+

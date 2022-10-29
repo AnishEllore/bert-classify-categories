@@ -1,1 +1,3 @@
 .DS_Store
+/bert-classify/data/bert-model.pt
+*/__pycache__/

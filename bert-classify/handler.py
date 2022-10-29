@@ -3,36 +3,30 @@ import os
 from pathlib import PurePath
 from typing import Any, List
 import time
-
+import pandas as pd
 import torch
 from torch.autograd import Variable
 
-from .core import const, model, utils
+from .core.model import *
 
 FUNCTION_ROOT = os.environ.get("function_root", "/root/function/")
 
 time_model_load_start = time.monotonic()
 # init model
-RNN = model.RNN(const.N_LETTERS, const.N_HIDDEN, const.N_CATEGORIES)
+model = BertClassifier()
 # fill in weights
-RNN.load_state_dict(
-    torch.load(str(PurePath(FUNCTION_ROOT, "data/char-rnn-classification.pt")))
+model.load_state_dict(
+    torch.load(str(PurePath(FUNCTION_ROOT, "data/bert-model.pt")))
 )
 time_model_load_end = time.monotonic()
 
 def predict(line: str, n_predictions: int = 3) -> List[Any]:
-    output = model.evaluate(Variable(utils.line_to_tensor(line)), RNN)
-
-    # Get top N categories
-    topv, topi = output.data.topk(n_predictions, 1, True)
-    predictions: List[Any] = []
-
-    for i in range(n_predictions):
-        value = str(topv[0][i]).split("tensor")[1]
-        category_index = topi[0][i]
-        predictions += [(value, const.ALL_CATEGORIES[category_index])]
-
-    return predictions
+    infer_data = []
+    infer_data.append(line)
+    df_infer = pd.DataFrame(infer_data, columns=['text'])
+    infer_output = inference(model, df_infer)
+    infer_output = get_labels(infer_output)
+    return infer_output
 
 def convert_to_ms(num):
     return int(round(num*1000))

@@ -4,8 +4,8 @@ provider:
 functions:
   classify:
     lang: pydatascience
-    handler: ./classify
-    image: anishellore5/classify:latest
+    handler: ./bert-classify
+    image: anishellore5/bert-classify:latest
     environment:
       MODEL_NAME: RESNET
       MAX_JSON_SIZE: '1mb'

@@ -1,4 +1,4 @@
-name: classify
+name: bert-classify
 channels:
   - pytorch
   - conda-forge

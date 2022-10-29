@@ -1,2 +1,2 @@
-faas-cli build classify
+faas-cli build bert-classify
 faas-cli deploy -f ./stack.yml
